@@ -28,16 +28,22 @@
   <script type="text/javascript">
 
     function drawTimeblocks() {
-      var timeblock = $("<div>").addClass("row", "time-block");
+      var timeblock = $("<div>").addClass("row time-block");
 
-      var hourBlock = $("<div>").addClass("hour");
-      var textBlock = $("<textarea>");
-      var saveBtn = $('<button type="button">').addClass("saveBtn");
+      var hourBlock = $("<div>").addClass("col-md-1 hour");
+      var textBlock = $("<textarea>").addClass("col-md-10 future");
+      var saveBtn = $('<button type="button">').addClass("col-md-1 saveBtn");
       saveBtn.html('<i class="far fa-save"></i>');
 
       timeblock.append(hourBlock, textBlock, saveBtn);
       $(".container").append(timeblock);
     }
+
+    //Time
+    console.log(moment());
+
+    var today = moment().format("dddd, MMMM Do");
+    $('#currentDay').text(today);
 
     drawTimeblocks();
 
