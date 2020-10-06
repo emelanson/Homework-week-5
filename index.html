@@ -27,11 +27,35 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script type="text/javascript">
 
-    function drawTimeblocks() {
-      var timeblock = $("<div>").addClass("row time-block");
+    var today = moment().format("dddd, MMMM Do, hA");
+    $('#currentDay').text(today);
+    var todayHour24 = parseInt(moment().format("H"));
 
+
+
+    function drawTimeblock(hour, milHour) {
+      var timeblock = $("<div>").addClass("row time-block").attr("hour24", milHour);
       var hourBlock = $("<div>").addClass("col-md-1 hour");
-      var textBlock = $("<textarea>").addClass("col-md-10 future");
+      hourBlock.text(hour);
+      var textBlock = $("<textarea>").addClass("col-md-10");
+
+
+      // console.log("hour: ", hour, " milHour: ", milHour, "format: ", moment().format("H"));
+      // console.log("milhour<todayhour24:", milHour < todayHour24);
+
+      //compare the time block's hour to the current hour
+      if (milHour < todayHour24) {
+        textBlock.addClass("past");
+        console.log(hour + "is: PAST");
+      } else if (milHour == todayHour24) {
+        textBlock.addClass("present");
+        console.log(hour + "is: PRESENT");
+      } else {
+        textBlock.addClass("future");
+        console.log(hour + "is: FUTURE");
+      };
+
+
       var saveBtn = $('<button type="button">').addClass("col-md-1 saveBtn");
       saveBtn.html('<i class="far fa-save"></i>');
 
@@ -39,13 +63,20 @@
       $(".container").append(timeblock);
     }
 
-    //Time
-    console.log(moment());
 
-    var today = moment().format("dddd, MMMM Do");
-    $('#currentDay').text(today);
+    function createWorkdayLayout() {
+      var initDay = moment().startOf('date').add(9, "h");
+      console.log(initDay.hour());
 
-    drawTimeblocks();
+      while (initDay.hour() <= 17) {
+        //create a time block for each hour of the workday.  
+        drawTimeblock(initDay.format("hA"), parseInt(initDay.format("H")));
+
+        initDay.add(1, "h");
+      }
+    }
+
+    createWorkdayLayout();
 
   </script>
 </body>
