@@ -37,7 +37,7 @@
       var timeblock = $("<div>").addClass("row time-block").attr("hour24", milHour);
       var hourBlock = $("<div>").addClass("col-md-1 hour");
       hourBlock.text(hour);
-      var textBlock = $("<textarea>").addClass("col-md-10");
+      var textBlock = $("<textarea>").addClass("col-md-10").attr("saveTextSlot", (milHour - 9));
 
 
       // console.log("hour: ", hour, " milHour: ", milHour, "format: ", moment().format("H"));
@@ -56,7 +56,7 @@
       };
 
 
-      var saveBtn = $('<button type="button">').addClass("col-md-1 saveBtn");
+      var saveBtn = $('<button type="button">').addClass("col-md-1 saveBtn").attr("saveBtnSlot", (milHour - 9));
       saveBtn.html('<i class="far fa-save"></i>');
 
       timeblock.append(hourBlock, textBlock, saveBtn);
@@ -76,7 +76,59 @@
       }
     }
 
+
+    var saveArray = ["", "", "", "", "", "", "", "", "",];
+    var storedSave = returnStoredSave();
+
+    function saveSlotText(slotNumber) {
+      var savedText = $(`textarea[saveTextSlot=${slotNumber}]`).val();
+
+      console.log("savedText: ", savedText);
+      console.log("storedSave: ", storedSave);
+
+
+      console.log("storedSave AFTER statechange: ", storedSave);
+
+      storedSave[slotNumber] = savedText;
+      var stringStoredSave = JSON.stringify(storedSave);
+
+      localStorage.setItem('saveText', stringStoredSave);
+      console.log(localStorage.getItem('saveText'));
+    }
+
+    function returnStoredSave() {
+      var save = JSON.parse(localStorage.getItem('saveText'));
+      console.log("storedSave:", save);
+
+      //handles if no storage item is set
+      if (save === null); {
+        save = saveArray;
+      }
+      console.log("storedSave AFTER CHECK:", save);
+      return save;
+    }
+
+
+    function updateTextBlockValues() {
+      console.log("returnStoredSave()", returnStoredSave());
+
+      for (let i = 0; i < storedSave.length; i++) {
+        console.log("$(`textarea[saveTextSlot=${i}]`)", $(`textarea[saveTextSlot=${i}]`));
+        $(`textarea[saveTextSlot=${i}]`).val(storedSave[i]);
+      };
+    }
+
+
     createWorkdayLayout();
+    updateTextBlockValues();
+
+    $(".container").click(function () {
+      var target = $(event.target);
+      if (target.attr("saveBtnSlot")) {
+        var targetSlot = target.attr("saveBtnSlot");
+        saveSlotText(targetSlot);
+      }
+    });
 
   </script>
 </body>
